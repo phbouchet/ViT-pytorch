@@ -5,9 +5,9 @@
     "img_size"       : 224,
     "num_classes"    : 1,
 
-    "max_epochs"       : 80,
-    "train_batch_size" : 14,
-    "eval_batch_size"  : 14,
+    "max_epochs"       : 25,
+    "train_batch_size" : 10,
+    "eval_batch_size"  : 10,
 
     "learning_rate" : 3e-2,
     "weight_decay"  : 0,
