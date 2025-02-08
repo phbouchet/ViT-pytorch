@@ -1,4 +1,6 @@
 # Vision Transformer
+This is a re-reimplementation of Jeonsworld's [PyTorch implementation of the ViT](https://github.com/jeonsworld/ViT-pytorch), which is almost 5 years old at this point. This implementation seeks to overhaul the PyTorch implementation by re-implementing the code in PyTorch Lightning to reduce boilerplate code, and facilitate compatibility with logging tools such as Tensorboard. Additionally, some bugs are fixed from the previous repo's implementation, such as replacing Apex's AMP and DDP strategies with torch.cuda's own stable implementations.
+
 Pytorch reimplementation of [Google's repository for the ViT model](https://github.com/google-research/vision_transformer) that was released with the paper [An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale](https://arxiv.org/abs/2010.11929) by Alexey Dosovitskiy, Lucas Beyer, Alexander Kolesnikov, Dirk Weissenborn, Xiaohua Zhai, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer, Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby.
 
 This paper show that Transformers applied directly to image patches and pre-trained on large datasets work really well on image recognition task.
@@ -30,84 +32,23 @@ wget https://storage.googleapis.com/vit_models/imagenet21k+imagenet2012/{MODEL_N
 
 ### 2. Train Model
 ```
-python3 train.py --name cifar10-100_500 --dataset cifar10 --model_type ViT-B_16 --pretrained_dir checkpoint/ViT-B_16.npz
-```
-CIFAR-10 and CIFAR-100 are automatically download and train. In order to use a different dataset you need to customize [data_utils.py](./utils/data_utils.py).
-
-The default batch size is 512. When GPU memory is insufficient, you can proceed with training by adjusting the value of `--gradient_accumulation_steps`.
-
-Also can use [Automatic Mixed Precision(Amp)](https://nvidia.github.io/apex/amp.html) to reduce memory usage and train faster
-```
-python3 train.py --name cifar10-100_500 --dataset cifar10 --model_type ViT-B_16 --pretrained_dir checkpoint/ViT-B_16.npz --fp16 --fp16_opt_level O2
+python3 main.py --expt experiments/hymenoptera_pretrain.json
 ```
 
+The Hymenoptera dataset can be downloaded at the following [link]()https://www.kaggle.com/datasets/thedatasith/hymenoptera/code
 
-
-## Results
-To verify that the converted model weight is correct, we simply compare it with the author's experimental results. We trained using mixed precision, and `--fp16_opt_level` was set to O2.
-
-### imagenet-21k
-* [**tensorboard**](https://tensorboard.dev/experiment/Oz9GmmQIQCOEr4xbdr8O3Q)
-
-|    model     |  dataset  | resolution | acc(official) | acc(this repo) |  time   |
-|:------------:|:---------:|:----------:|:-------------:|:--------------:|:-------:|
-|   ViT-B_16   | CIFAR-10  |  224x224   |       -       |     0.9908     | 3h 13m  |
-|   ViT-B_16   | CIFAR-10  |  384x384   |    0.9903     |     0.9906     | 12h 25m |
-|   ViT_B_16   | CIFAR-100 |  224x224   |       -       |     0.923      |  3h 9m  |
-|   ViT_B_16   | CIFAR-100 |  384x384   |    0.9264     |     0.9228     | 12h 31m |
-| R50-ViT-B_16 | CIFAR-10  |  224x224   |       -       |     0.9892     | 4h 23m  |
-| R50-ViT-B_16 | CIFAR-10  |  384x384   |     0.99      |     0.9904     | 15h 40m |
-| R50-ViT-B_16 | CIFAR-100 |  224x224   |       -       |     0.9231     | 4h 18m  |
-| R50-ViT-B_16 | CIFAR-100 |  384x384   |    0.9231     |     0.9197     | 15h 53m |
-|   ViT_L_32   | CIFAR-10  |  224x224   |       -       |     0.9903     | 2h 11m  |
-|   ViT_L_32   | CIFAR-100 |  224x224   |       -       |     0.9276     |  2h 9m  |
-|   ViT_H_14   | CIFAR-100 |  224x224   |       -       |      WIP       |         |
-
-
-### imagenet-21k + imagenet2012
-* [**tensorboard**](https://tensorboard.dev/experiment/CXOzjFRqTM6aLCk0jNXgAw/#scalars)
-
-|    model     |  dataset  | resolution |  acc   |
-|:------------:|:---------:|:----------:|:------:|
-| ViT-B_16-224 | CIFAR-10  |  224x224   |  0.99  |
-| ViT_B_16-224 | CIFAR-100 |  224x224   | 0.9245 |
-|   ViT-L_32   | CIFAR-10  |  224x224   | 0.9903 |
-|   ViT-L_32   | CIFAR-100 |  224x224   | 0.9285 |
-
-
-### shorter train
-* In the experiment below, we used a resolution size (224x224).
-* [**tensorboard**](https://tensorboard.dev/experiment/lpknnMpHRT2qpVrSZi10Ag/#scalars)
-
-|  upstream   |  model   |  dataset  | total_steps /warmup_steps | acc(official) | acc(this repo) |
-|:-----------:|:--------:|:---------:|:-------------------------:|:-------------:|:--------------:|
-| imagenet21k | ViT-B_16 | CIFAR-10  |          500/100          |    0.9859     |     0.9859     |
-| imagenet21k | ViT-B_16 | CIFAR-10  |         1000/100          |    0.9886     |     0.9878     |
-| imagenet21k | ViT-B_16 | CIFAR-100 |          500/100          |    0.8917     |     0.9072     |
-| imagenet21k | ViT-B_16 | CIFAR-100 |         1000/100          |    0.9115     |     0.9216     |
+The default batch size is 10 due to limitations on my personal machine, however on the original repository, the batch size is set to 512 by default.
 
 
 ## Visualization
 The ViT consists of a Standard Transformer Encoder, and the encoder consists of Self-Attention and MLP module.
 The attention map for the input image can be visualized through the attention score of self-attention.
 
-Visualization code can be found at [visualize_attention_map](./visualize_attention_map.ipynb).
 
 ![fig3](./img/figure3.png)
 
 
 ## Reference
+* [Original ViT-PyTorch repo](https://github.com/jeonsworld/ViT-pytorch)
 * [Google ViT](https://github.com/google-research/vision_transformer)
 * [Pytorch Image Models(timm)](https://github.com/rwightman/pytorch-image-models)
-
-
-## Citations
-
-```bibtex
-@article{dosovitskiy2020,
-  title={An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale},
-  author={Dosovitskiy, Alexey and Beyer, Lucas and Kolesnikov, Alexander and Weissenborn, Dirk and Zhai, Xiaohua and Unterthiner, Thomas and  Dehghani, Mostafa and Minderer, Matthias and Heigold, Georg and Gelly, Sylvain and Uszkoreit, Jakob and Houlsby, Neil},
-  journal={arXiv preprint arXiv:2010.11929},
-  year={2020}
-}
-```
