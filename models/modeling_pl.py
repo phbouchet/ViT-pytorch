@@ -382,12 +382,11 @@ class VisionTransformer(pl.LightningModule):
 
     def load_from(self, weights):
         with torch.no_grad():
-            if self.zero_head:
-                nn.init.zeros_(self.head.weight)
-                nn.init.zeros_(self.head.bias)
-            else:
-                self.head.weight.copy_(np2th(weights["head/kernel"]).t())
-                self.head.bias.copy_(np2th(weights["head/bias"]).t())
+            hk = weights["head/kernel"][:,0]
+            hb = np.asarray(weights["head/bias"][0])
+
+            self.head.weight.copy_(np2th(hk).t())
+            self.head.bias.copy_(np2th(hb).t())
 
             self.transformer.embeddings.patch_embeddings.weight.copy_(np2th(weights["embedding/kernel"], conv=True))
             self.transformer.embeddings.patch_embeddings.bias.copy_(np2th(weights["embedding/bias"]))
