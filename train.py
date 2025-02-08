@@ -10,12 +10,12 @@ import numpy as np
 from datetime import timedelta
 
 import torch
-import torch.distributed as dist
 
 from tqdm import tqdm
 from torch.utils.tensorboard import SummaryWriter
-from apex import amp
-from apex.parallel import DistributedDataParallel as DDP
+
+from torch.cuda import amp
+from torch.nn.parallel import DistributedDataParallel as DDP
 
 from models.modeling import VisionTransformer, CONFIGS
 from utils.scheduler import WarmupLinearSchedule, WarmupCosineSchedule
@@ -59,7 +59,7 @@ def setup(args):
     # Prepare model
     config = CONFIGS[args.model_type]
 
-    num_classes = 10 if args.dataset == "cifar10" else 100
+    num_classes = 1
 
     model = VisionTransformer(config, args.img_size, zero_head=True, num_classes=num_classes)
     model.load_from(np.load(args.pretrained_dir))
@@ -101,31 +101,26 @@ def valid(args, model, writer, test_loader, global_step):
                           bar_format="{l_bar}{r_bar}",
                           dynamic_ncols=True,
                           disable=args.local_rank not in [-1, 0])
-    loss_fct = torch.nn.CrossEntropyLoss()
+    loss_fct = torch.nn.BCEWithLogitsLoss()
     for step, batch in enumerate(epoch_iterator):
         batch = tuple(t.to(args.device) for t in batch)
         x, y = batch
         with torch.no_grad():
-            logits = model(x)[0]
-
-            eval_loss = loss_fct(logits, y)
+            preds = model(x)[0]
+            eval_loss = loss_fct(preds, y)
             eval_losses.update(eval_loss.item())
 
-            preds = torch.argmax(logits, dim=-1)
+        preds = torch.nn.functional.sigmoid(preds)
+        all_preds.append(preds.detach().cpu().numpy())
+        all_label.append(y.detach().cpu().numpy())
 
-        if len(all_preds) == 0:
-            all_preds.append(preds.detach().cpu().numpy())
-            all_label.append(y.detach().cpu().numpy())
-        else:
-            all_preds[0] = np.append(
-                all_preds[0], preds.detach().cpu().numpy(), axis=0
-            )
-            all_label[0] = np.append(
-                all_label[0], y.detach().cpu().numpy(), axis=0
-            )
         epoch_iterator.set_description("Validating... (loss=%2.5f)" % eval_losses.val)
 
-    all_preds, all_label = all_preds[0], all_label[0]
+    all_preds = np.concatenate(all_preds, axis=0)
+    all_label = np.concatenate(all_label, axis=0)
+
+    all_preds = np.where(all_preds > 0.5, 1., 0.)
+
     accuracy = simple_accuracy(all_preds, all_label)
 
     logger.info("\n")
