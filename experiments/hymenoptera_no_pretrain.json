@@ -1,0 +1,15 @@
+{
+    "name"           : "hymenoptera_no_pretrain",
+    "model_type"     : "ViT-B_16",
+    "logdir"         : "logs/",
+    "img_size"       : 224,
+    "num_classes"    : 1,
+
+    "max_epochs"       : 80,
+    "train_batch_size" : 14,
+    "eval_batch_size"  : 14,
+
+    "learning_rate" : 3e-2,
+    "weight_decay"  : 0,
+    "local_rank"    : -1
+}

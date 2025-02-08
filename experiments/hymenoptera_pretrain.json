@@ -1,0 +1,16 @@
+{
+    "name"           : "hymenoptera_pretrained",
+    "model_type"     : "ViT-B_16",
+    "pretrained_dir" : "checkpoint/ViT-B_16.npz",
+    "logdir"         : "logs/",
+    "img_size"       : 224,
+    "num_classes"    : 1,
+
+    "max_epochs"       : 80,
+    "train_batch_size" : 10,
+    "eval_batch_size"  : 10,
+
+    "learning_rate" : 3e-2,
+    "weight_decay"  : 0,
+    "local_rank"    : -1
+}
