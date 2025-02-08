@@ -1,12 +1,13 @@
 # Created by .ignore support plugin (hsz.mobi)
 ### Python template
 
-# Data path
+# My ignores
 data/*
 logs/*
 checkpoint/*
 lightning_logs/*
 output/*
+*.ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
