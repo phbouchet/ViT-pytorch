@@ -13,7 +13,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 
-from torch.nn import CrossEntropyLoss, Dropout, Softmax, Linear, Conv2d, LayerNorm
+from torch.nn import CrossEntropyLoss, BCEWithLogitsLoss, Dropout, Softmax, Linear, Conv2d, LayerNorm
 from torch.nn.modules.utils import _pair
 from scipy import ndimage
 
@@ -260,22 +260,22 @@ class Transformer(nn.Module):
 
 
 class VisionTransformer(nn.Module):
-    def __init__(self, config, img_size=224, num_classes=21843, zero_head=False, vis=False):
+    def __init__(self, config, img_size=224, num_classes=1, zero_head=False, vis=False):
         super(VisionTransformer, self).__init__()
         self.num_classes = num_classes
-        self.zero_head = zero_head
-        self.classifier = config.classifier
-
+        self.zero_head   = zero_head
+        self.classifier  = config.classifier
         self.transformer = Transformer(config, img_size, vis)
         self.head = Linear(config.hidden_size, num_classes)
 
+        self.loss_fct = BCEWithLogitsLoss()
+
     def forward(self, x, labels=None):
-        x, attn_weights = self.transformer(x)
-        logits = self.head(x[:, 0])
+        x, attn_weights   = self.transformer(x)
+        logits = self.head(x[:,0]).flatten()
 
         if labels is not None:
-            loss_fct = CrossEntropyLoss()
-            loss = loss_fct(logits.view(-1, self.num_classes), labels.view(-1))
+            loss   = self.loss_fct(logits, labels)
             return loss
         else:
             return logits, attn_weights
