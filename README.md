@@ -9,10 +9,6 @@ This paper show that Transformers applied directly to image patches and pre-trai
 
 ![fig1](./img/figure1.png)
 
-Vision Transformer achieve State-of-the-Art in image recognition task with standard Transformer encoder and fixed-size patches. In order to perform classification, author use the standard approach of adding an extra learnable "classification token" to the sequence.
-
-![fig2](./img/figure2.png)
-
 
 ## Usage
 ### 1. Download Pre-trained model (Google's Official Checkpoint)
@@ -47,7 +43,7 @@ python3 main.py --mode eval --expt experiments/hymenoptera_pretrain.json --ckpt_
 ```
 
 ## Results
-The model was trained and evaluated on the Hymenoptera dataset, for classification of images of ants or bees for a total of 25 epochs, with a batch size of 10. It was trained on a NVIDIA GeForce GTX 1650 GPU, with 4GB of VRAM. The specific model configs for each experiment can be found in the `experiment/` folder.
+The model was trained and evaluated on the Hymenoptera dataset, for classification of images of ants or bees for a total of 25 epochs, with a batch size of 10. It was trained on a NVIDIA GeForce GTX 1650 GPU, with 4GB of VRAM. The specific model configs for each experiment can be found in the `experiment/` folder. The "Pretrain" column in this table refers to if this model was instantiated with the imagenet21k pre-train + imagenet2012 fine-tuning weights.
 
 |    Model     |  Pretrain   | Resolution |   Accuracy    |    F1-score    |    AUC    |  time   |
 |:------------:|:-----------:|:----------:|:-------------:|:--------------:|:---------:|:-------:|
