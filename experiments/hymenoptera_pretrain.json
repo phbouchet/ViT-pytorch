@@ -1,5 +1,5 @@
 {
-    "name"           : "hymenoptera_pretrained",
+    "name"           : "hymenoptera_pretrain",
     "model_type"     : "ViT-B_16",
     "pretrained_dir" : "checkpoint/ViT-B_16.npz",
     "logdir"         : "logs/",
