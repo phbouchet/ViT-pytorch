@@ -7,6 +7,7 @@ logs/*
 checkpoint/*
 lightning_logs/*
 output/*
+img/*
 *.ipynb
 
 # Byte-compiled / optimized / DLL files
