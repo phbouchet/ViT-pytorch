@@ -39,18 +39,26 @@ Breaking down the naming convention:
   - In ViT, an image is split into fixed-size patches, which are then flattened and fed into the Transformer.
   - A patch size of 32 means that each image is divided into non-overlapping 32×32 pixel patches before being processed.
 
-### 2. Train Model
+### 2. Setting up the virtual environment
+
 ```
-python3 main.py --mode train --expt experiments/hymenoptera_pretrain_R50-ViT-B_16.json
+$ python3 -m venv env
+$ source env/bin/activate
+(env) $ pip install -r requirements.txt
+```
+
+### 3. Train Model
+```
+(env) $ python3 main.py --mode train --expt experiments/hymenoptera_pretrain_R50-ViT-B_16.json
 ```
 
 The Hymenoptera dataset can be downloaded at the following [link]()https://www.kaggle.com/datasets/thedatasith/hymenoptera/code
 
 The default batch size is 8 due to limitations on my personal machine, however on the original repository, the batch size is set to 512 by default.
 
-### 3. Evaluate Model
+### 4. Evaluate Model
 ```
-python3 main.py --mode eval --expt experiments/hymenoptera_pretrain_R50-ViT-B_16.json --ckpt_path checkpoint/your_model.ckpt
+(env) $ python3 main.py --mode eval --expt experiments/hymenoptera_pretrain_R50-ViT-B_16.json --ckpt_path checkpoint/your_model.ckpt
 ```
 
 ## Results
@@ -76,7 +84,7 @@ The "Pretrain" column in this table refers to if this model was instantiated wit
 
 ![img](./img/confusion_matrix.png)
 
-## Reference
+## References
 * [Original ViT-PyTorch repo](https://github.com/jeonsworld/ViT-pytorch)
 * [Google ViT](https://github.com/google-research/vision_transformer)
 * [Pytorch Image Models(timm)](https://github.com/rwightman/pytorch-image-models)
