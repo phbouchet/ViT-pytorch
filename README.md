@@ -34,13 +34,17 @@ wget https://storage.googleapis.com/vit_models/imagenet21k+imagenet2012/{MODEL_N
 
 ### 2. Train Model
 ```
-python3 main.py --expt experiments/hymenoptera_pretrain.json
+python3 main.py --mode train --expt experiments/hymenoptera_pretrain.json
 ```
 
 The Hymenoptera dataset can be downloaded at the following [link]()https://www.kaggle.com/datasets/thedatasith/hymenoptera/code
 
 The default batch size is 10 due to limitations on my personal machine, however on the original repository, the batch size is set to 512 by default.
 
+### 3. Evaluate Model
+```
+python3 main.py --mode eval --expt experiments/hymenoptera_pretrain.json --ckpt_path checkpoint/your_model.ckpt
+```
 
 ## Visualization
 The ViT consists of a Standard Transformer Encoder, and the encoder consists of Self-Attention and MLP module.
