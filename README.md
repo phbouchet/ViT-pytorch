@@ -28,6 +28,17 @@ wget https://storage.googleapis.com/vit_models/imagenet21k+imagenet2012/{MODEL_N
 
 ```
 
+Breaking down the naming convention:
+- R50 → Stands for ResNet50. If the name starts with "R50" then it refers to a hybrid variant combining both ResNet and ViT in one.
+- ViT → Stands for Vision Transformer
+- B → Refers to the "Base" variant of ViT. ViT models come in different sizes:
+  - ViT-B: Base model (~86M parameters)
+  - ViT-L: Large model (~307M parameters)
+  - ViT-H: Huge model (~632M parameters)
+- 16, 32 → Represents the patch size (16×16, or 32×32 pixels).
+  - In ViT, an image is split into fixed-size patches, which are then flattened and fed into the Transformer.
+  - A patch size of 32 means that each image is divided into non-overlapping 32×32 pixel patches before being processed.
+
 ### 2. Train Model
 ```
 python3 main.py --mode train --expt experiments/hymenoptera_pretrain.json
@@ -43,23 +54,17 @@ python3 main.py --mode eval --expt experiments/hymenoptera_pretrain.json --ckpt_
 ```
 
 ## Results
-The model was trained and evaluated on the Hymenoptera dataset, for classification of images of ants or bees for a total of 25 epochs, with a batch size of 10. It was trained on a NVIDIA GeForce GTX 1650 GPU, with 4GB of VRAM. The specific model configs for each experiment can be found in the `experiment/` folder. The "Pretrain" column in this table refers to if this model was instantiated with the imagenet21k pre-train + imagenet2012 fine-tuning weights.
+The model was trained and evaluated on the Hymenoptera dataset, for classification of images of ants or bees for a total of 25 epochs, with a batch size of 8 for each experiment. Experiments were run on a NVIDIA GeForce GTX 1650 GPU, with 4GB of VRAM. The specific model configs for each experiment can be found in the `experiment/` folder. The "Pretrain" column in this table refers to if this model was instantiated with the imagenet21k pre-train + imagenet2012 fine-tuning weights.
 
-|    Model     |  Pretrain   | Resolution |   Accuracy    |    F1-score    |    AUC    |  time   |
-|:------------:|:-----------:|:----------:|:-------------:|:--------------:|:---------:|:-------:|
-|   ViT-B_16   | Yes         |  224x224   |    0.9477     |     0.9428     |   0.9850  |    8m   |
-|   ViT-B_16   | No          |  224x224   |    0.6405     |     0.5864     |   0.6382  |    8m   |
+|    Model     |  Pretrain   | Patch Size | Resolution |   ↑ Accuracy  |    F1-score    |    AUC    |  time   |
+|:------------:|:-----------:|:----------:|:----------:|:-------------:|:--------------:|:---------:|:-------:|
+| R50+ViT-B_16 | Yes         |   16x16    |  224x224   |    0.9346     |     0.9295     |   0.9714  |   11m   |
+|   ViT-B_16   | Yes         |   16x16    |  224x224   |    0.9281     |     0.9241     |   0.9746  |    8m   |
+|   ViT-B_32   | Yes         |   32x32    |  224x224   |    0.9150     |     0.9064     |   0.9710  |    2m   |
+|   ViT-B_16   | No          |   16x16    |  224x224   |    0.6143     |     0.4957     |   0.6483  |    8m   |
+|   ViT-B_32   | No          |   32x32    |  224x224   |    0.6013     |     0.4958     |   0.6925  |    2m   |
+| R50+ViT-B_16 | No          |   16x16    |  224x224   |    0.5621     |     0.1927     |   0.6899  |   11m   |
 
-### Confusion Matrix and ROC Curve for pre-trained ViT
-![img](./img/confusion_matrix_pretrain.png)
-
-![img](./img/roc_curve_pretrain.png)
-
-
-### Confusion Matrix and ROC Curve for non pre-trained ViT
-![img](./img/confusion_matrix_no_pretrain.png)
-
-![img](./img/roc_curve_no_pretrain.png)
 
 ## Reference
 * [Original ViT-PyTorch repo](https://github.com/jeonsworld/ViT-pytorch)
