@@ -46,7 +46,7 @@ python3 main.py --mode train --expt experiments/hymenoptera_pretrain_R50-ViT-B_1
 
 The Hymenoptera dataset can be downloaded at the following [link]()https://www.kaggle.com/datasets/thedatasith/hymenoptera/code
 
-The default batch size is 10 due to limitations on my personal machine, however on the original repository, the batch size is set to 512 by default.
+The default batch size is 8 due to limitations on my personal machine, however on the original repository, the batch size is set to 512 by default.
 
 ### 3. Evaluate Model
 ```
