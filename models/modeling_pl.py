@@ -12,14 +12,13 @@ import pytorch_lightning as pl
 import numpy as np
 from scipy import ndimage
 
-from sklearn.metrics import roc_auc_score, accuracy_score, f1_score, roc_curve, confusion_matrix
+import torchmetrics
 from PIL import Image
 
 from torch.nn import BCEWithLogitsLoss, Dropout, Softmax, Linear, Conv2d, LayerNorm
 from torch.nn.modules.utils import _pair
 from torchvision import transforms
 
-import seaborn as sns
 import matplotlib
 matplotlib.use('Agg')  # Non-interactive backend for saving figures
 import matplotlib.pyplot as plt
@@ -287,8 +286,13 @@ class VisionTransformer(pl.LightningModule):
         self.weight_decay = args["weight_decay"]
         self.loss         = BCEWithLogitsLoss()
 
-        self.all_labels = []
-        self.all_probs  = []
+        self.metrics = {
+            "accuracy" : torchmetrics.classification.BinaryAccuracy(threshold=0.5).to("cuda"),
+            "roc_auc"  : torchmetrics.classification.BinaryAUROC().to("cuda"),
+            "f1_score" : torchmetrics.classification.F1Score(task="binary").to("cuda"),
+            "roc"  : torchmetrics.classification.BinaryROC().to("cuda"),
+            "cm"   : torchmetrics.classification.ConfusionMatrix(task="binary").to("cuda"),
+            }
 
     def forward(self, x):
         x      = self.transformer(x)
@@ -309,12 +313,8 @@ class VisionTransformer(pl.LightningModule):
         logits   = self.forward(x)
         val_loss = self.loss(logits, y)
 
-        # Convert logits to probabilities
-        probs  = torch.sigmoid(logits).detach().cpu().numpy()
-        y_true = y.detach().cpu().numpy()
-
-        self.all_probs.append(probs)
-        self.all_labels.append(y_true.astype(int))
+        for _, metric in self.metrics.items():
+            metric.update(logits, y.int())
 
         # Log metrics
         self.log("val_loss", val_loss, prog_bar=True, logger=True)
@@ -324,52 +324,48 @@ class VisionTransformer(pl.LightningModule):
         if self.trainer.sanity_checking:
             return
 
-        self.all_labels = np.concatenate(self.all_labels, axis=0)
-        self.all_probs  = np.concatenate(self.all_probs,  axis=0)
-        all_preds  = self.all_probs > 0.5
+        for metric_name, metric in self.metrics.items():
+            if metric_name == "roc" or metric_name == "cm":
+                continue
 
-        auc_score = roc_auc_score(self.all_labels, self.all_probs)
-        f1        = f1_score(self.all_labels, all_preds)
-        accuracy  = accuracy_score(self.all_labels, all_preds)
-
-        self.log("accuracy", accuracy, prog_bar=True, logger=True)
-        self.log("f1_score", f1,       prog_bar=True, logger=True)
-        self.log("roc_auc", auc_score, prog_bar=True, logger=True)
+            self.log(metric_name, metric.compute(), prog_bar=True)
 
         self._save_confusion_matrix()
-        self._save_roc_auc()
+        self._plot_roc_auc()
 
-        self.all_labels = []
-        self.all_probs  = []
+        for metric_name, metric in self.metrics.items():
+            metric.reset()
 
-    def _save_roc_auc(self):
-        fpr, tpr, _ = roc_curve(self.all_labels, self.all_probs, drop_intermediate=False)
-        roc_auc     = roc_auc_score(self.all_labels, self.all_probs)
+    def _plot_roc_auc(self):
+        fig, ax = self.metrics["roc"].plot(score=True)
 
-        plt.figure(figsize=(6, 6))
-        plt.plot(fpr, tpr, color="blue", label=f"AUC = {roc_auc:.2f}")
-        plt.plot([0, 1], [0, 1], color="gray", linestyle="--")
-        plt.xlabel("False Positive Rate")
-        plt.ylabel("True Positive Rate")
-        plt.title("ROC Curve")
-        plt.legend(loc="lower right")
-
-        plt.savefig("img/roc_curve.png")
-        plt.close()
+        fig.set_size_inches(6, 6)
+        ax.plot([0, 1], [0, 1], linestyle="--", color="gray", label="Random Chance")
+        ax.set_xlabel("False Positive Rate")
+        ax.set_ylabel("True Positive Rate")
+        ax.set_title("ROC Curve")
+        ax.legend(loc="lower right")
+        fig.savefig("img/roc_curve.png")
+        plt.close(fig)
 
         img = Image.open("img/roc_curve.png")
         img_tensor = transforms.ToTensor()(img)
         self.logger.experiment.add_image("ROC Curve", img_tensor, self.current_epoch)
 
     def _save_confusion_matrix(self):
+        fig, ax = self.metrics["cm"].plot()
+
         labels = ["Bees", "Ants"] # Bees at 0, Ants at 1
 
-        cm = confusion_matrix(self.all_labels, self.all_probs > 0.5)
-        sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=labels, yticklabels=labels)
+        ax.set_title("Confusion Matrix")
 
-        plt.title("Confusion Matrix")
-        plt.savefig("img/confusion_matrix.png")
-        plt.close()
+        ax.set_xticks([0, 1])
+        ax.set_yticks([0, 1])
+        ax.set_xticklabels(labels)
+        ax.set_yticklabels(labels)
+
+        fig.savefig("img/confusion_matrix.png")
+        plt.close(fig)
 
         img = Image.open("img/confusion_matrix.png")
         img_tensor = transforms.ToTensor()(img)
