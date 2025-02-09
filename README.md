@@ -46,13 +46,24 @@ The default batch size is 10 due to limitations on my personal machine, however 
 python3 main.py --mode eval --expt experiments/hymenoptera_pretrain.json --ckpt_path checkpoint/your_model.ckpt
 ```
 
-## Visualization
-The ViT consists of a Standard Transformer Encoder, and the encoder consists of Self-Attention and MLP module.
-The attention map for the input image can be visualized through the attention score of self-attention.
+## Results
+The model was trained and evaluated on the Hymenoptera dataset, for classification of images of ants or bees for a total of 25 epochs, with a batch size of 10. It was trained on a NVIDIA GeForce GTX 1650 GPU, with 4GB of VRAM. The specific model configs for each experiment can be found in the `experiment/` folder.
+
+|    Model     |  Pretrain   | Resolution |   Accuracy    |    F1-score    |    AUC    |  time   |
+|:------------:|:-----------:|:----------:|:-------------:|:--------------:|:---------:|:-------:|
+|   ViT-B_16   | Yes         |  224x224   |    0.9477     |     0.9428     |   0.9850  |    8m   |
+|   ViT-B_16   | No          |  224x224   |    0.6405     |     0.5864     |   0.6382  |    8m   |
+
+### Confusion Matrix and ROC Curve for pre-trained ViT
+![img](./img/confusion_matrix_pretrain.png)
+
+![img](./img/roc_curve_pretrain.png)
 
 
-![fig3](./img/figure3.png)
+### Confusion Matrix and ROC Curve for non pre-trained ViT
+![img](./img/confusion_matrix_no_pretrain.png)
 
+![img](./img/roc_curve_no_pretrain.png)
 
 ## Reference
 * [Original ViT-PyTorch repo](https://github.com/jeonsworld/ViT-pytorch)
