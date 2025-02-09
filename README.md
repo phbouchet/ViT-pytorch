@@ -41,7 +41,7 @@ Breaking down the naming convention:
 
 ### 2. Train Model
 ```
-python3 main.py --mode train --expt experiments/hymenoptera_pretrain.json
+python3 main.py --mode train --expt experiments/hymenoptera_pretrain_R50-ViT-B_16.json
 ```
 
 The Hymenoptera dataset can be downloaded at the following [link]()https://www.kaggle.com/datasets/thedatasith/hymenoptera/code
@@ -50,11 +50,13 @@ The default batch size is 10 due to limitations on my personal machine, however 
 
 ### 3. Evaluate Model
 ```
-python3 main.py --mode eval --expt experiments/hymenoptera_pretrain.json --ckpt_path checkpoint/your_model.ckpt
+python3 main.py --mode eval --expt experiments/hymenoptera_pretrain_R50-ViT-B_16.json --ckpt_path checkpoint/your_model.ckpt
 ```
 
 ## Results
-The model was trained and evaluated on the Hymenoptera dataset, for classification of images of ants or bees for a total of 25 epochs, with a batch size of 8 for each experiment. Experiments were run on a NVIDIA GeForce GTX 1650 GPU, with 4GB of VRAM. The specific model configs for each experiment can be found in the `experiment/` folder. The "Pretrain" column in this table refers to if this model was instantiated with the imagenet21k pre-train + imagenet2012 fine-tuning weights.
+The model was trained and evaluated on the Hymenoptera dataset for the binary classification of ants and bees. Training was conducted for a total of 25 epochs with a batch size of 8 per experiment. All experiments were performed on an NVIDIA GeForce GTX 1650 GPU with 4GB of VRAM. Optimization was carried out using Stochastic Gradient Descent (SGD) with a learning rate of $3 \cdot 10^{-2}$, employing a WarmupCosine learning rate scheduler. Detailed specifications and configurations for each experiment are documented in the `experiment/` directory., with WarmupCosine scheduler.
+
+The "Pretrain" column in this table refers to if this model was instantiated with the imagenet21k pre-train + imagenet2012 fine-tuning weights.
 
 |    Model     |  Pretrain   | Patch Size | Resolution |   ↑ Accuracy  |    F1-score    |    AUC    |  time   |
 |:------------:|:-----------:|:----------:|:----------:|:-------------:|:--------------:|:---------:|:-------:|
