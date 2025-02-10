@@ -1,10 +1,9 @@
 import logging
 
 import torch
-import numpy as np
 
 from torchvision import transforms
-from torch.utils.data import DataLoader, RandomSampler, DistributedSampler, SequentialSampler, WeightedRandomSampler
+from torch.utils.data import DataLoader, SequentialSampler
 from utils.hymenoptera_dataset import BeeAntDataset
 
 logger = logging.getLogger(__name__)
@@ -15,14 +14,12 @@ def get_loader(config):
         torch.distributed.barrier()
 
     transform_train = transforms.Compose([
-        transforms.Grayscale(num_output_channels=3),  # Convert grayscale to RGB
         transforms.RandomResizedCrop((config["img_size"], config["img_size"]), scale=(0.05, 1.0)),
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),
     ])
     transform_test = transforms.Compose([
-        transforms.Grayscale(num_output_channels=3),  # Convert grayscale to RGB
         transforms.Resize((config["img_size"], config["img_size"])),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),
