@@ -330,7 +330,7 @@ class VisionTransformer(pl.LightningModule):
 
             self.log(metric_name, metric.compute(), prog_bar=True)
 
-        self._save_confusion_matrix()
+        self._plot_confusion_matrix()
         self._plot_roc_auc()
 
         for metric_name, metric in self.metrics.items():
@@ -352,7 +352,7 @@ class VisionTransformer(pl.LightningModule):
         img_tensor = transforms.ToTensor()(img)
         self.logger.experiment.add_image("ROC Curve", img_tensor, self.current_epoch)
 
-    def _save_confusion_matrix(self):
+    def _plot_confusion_matrix(self):
         fig, ax = self.metrics["cm"].plot()
 
         labels = ["Bees", "Ants"] # Bees at 0, Ants at 1
