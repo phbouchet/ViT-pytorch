@@ -68,19 +68,19 @@ The "Pretrain" column in this table refers to if this model was instantiated wit
 
 |    Model     |  Pretrain   | Patch Size | Resolution |   ↑ Accuracy  |    F1-score    |    AUC    |  time   |
 |:------------:|:-----------:|:----------:|:----------:|:-------------:|:--------------:|:---------:|:-------:|
-| R50-ViT-B_16 | Yes         |   16x16    |  224x224   |    0.9346     |     0.9295     |   0.9714  |   11m   |
-|   ViT-B_16   | Yes         |   16x16    |  224x224   |    0.9281     |     0.9241     |   0.9746  |    8m   |
-|   ViT-B_32   | Yes         |   32x32    |  224x224   |    0.9150     |     0.9064     |   0.9710  |    2m   |
-|   ViT-B_16   | No          |   16x16    |  224x224   |    0.6143     |     0.4957     |   0.6483  |    8m   |
-|   ViT-B_32   | No          |   32x32    |  224x224   |    0.6013     |     0.4958     |   0.6925  |    2m   |
-| R50-ViT-B_16 | No          |   16x16    |  224x224   |    0.5621     |     0.1927     |   0.6899  |   11m   |
+|   ViT-B_16   | Yes         |   16x16    |  224x224   |    0.9673     |     0.9650     |   0.9945  |    9m   |
+|   ViT-B_32   | Yes         |   32x32    |  224x224   |    0.9608     |     0.9571     |   0.9927  |    2m   |
+| R50-ViT-B_16 | Yes         |   16x16    |  224x224   |    0.9542     |     0.9503     |   0.9800  |   11m   |
+|   ViT-B_16   | No          |   16x16    |  224x224   |    0.7124     |     0.7179     |   0.7687  |    8m   |
+|   ViT-B_32   | No          |   32x32    |  224x224   |    0.6993     |     0.7088     |   0.7989  |    2m   |
+| R50-ViT-B_16 | No          |   16x16    |  224x224   |    0.5424     |      0.0       |   0.5353  |   11m   |
 
 
-### Pretrained R50-VIT-B_16 ROC
+### Pretrained VIT-B_16 ROC
 
 ![img](./img/roc_curve.png)
 
-### Pretrained R50-ViT-B_16 Confusion Matrix
+### Pretrained ViT-B_16 Confusion Matrix
 
 ![img](./img/confusion_matrix.png)
 
