@@ -49,7 +49,7 @@ $ source env/bin/activate
 
 ### 3. Train Model
 ```
-(env) $ python3 main.py --mode train --expt experiments/hymenoptera_pretrain_R50-ViT-B_16.json
+(env) $ python3 main.py --mode train --expt experiments/hymenoptera_pretrain_ViT-B_16.json
 ```
 
 The Hymenoptera dataset can be downloaded at the following [link]()https://www.kaggle.com/datasets/thedatasith/hymenoptera/code
@@ -58,7 +58,7 @@ The default batch size is 8 due to limitations on my personal machine, however o
 
 ### 4. Evaluate Model
 ```
-(env) $ python3 main.py --mode eval --expt experiments/hymenoptera_pretrain_R50-ViT-B_16.json --ckpt_path checkpoint/your_model.ckpt
+(env) $ python3 main.py --mode eval --expt experiments/hymenoptera_pretrain_iT-B_16.json --ckpt_path checkpoint/your_model.ckpt
 ```
 
 ## Results
