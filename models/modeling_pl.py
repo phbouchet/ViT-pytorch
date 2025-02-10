@@ -331,12 +331,12 @@ class VisionTransformer(pl.LightningModule):
             self.log(metric_name, metric.compute(), prog_bar=True)
 
         self._plot_confusion_matrix()
-        self._plot_roc_auc()
+        self._plot_roc()
 
         for metric_name, metric in self.metrics.items():
             metric.reset()
 
-    def _plot_roc_auc(self):
+    def _plot_roc(self):
         fig, ax = self.metrics["roc"].plot(score=True)
 
         fig.set_size_inches(6, 6)
