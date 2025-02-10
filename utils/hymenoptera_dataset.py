@@ -40,13 +40,10 @@ class BeeAntDataset(Dataset):
         return len(self.images)
 
     def __getitem__(self, idx):
-        if torch.is_tensor(idx):
-            idx = idx.tolist()
-
         img_name = self.images[idx]
         target   = self.labels[idx]
 
-        image = Image.open(img_name)
+        image = Image.open(img_name).convert('RGB')
 
         if self.transform:
             image = self.transform(image)
