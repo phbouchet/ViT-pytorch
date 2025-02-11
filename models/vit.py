@@ -98,7 +98,7 @@ class ViT(pl.LightningModule):
     def _plot_roc(self):
         fig, ax = self.metrics["roc"].plot(score=True)
 
-        fig.set_size_inches(8, 8)
+        fig.set_size_inches(10, 10)
         ax.plot([0, 1], [0, 1], linestyle="--", color="gray", label="Random Chance")
         ax.set_xlabel("False Positive Rate")
         ax.set_ylabel("True Positive Rate")
@@ -113,7 +113,7 @@ class ViT(pl.LightningModule):
 
     def _plot_confusion_matrix(self):
         fig, ax = self.metrics["cm"].plot()
-        fig.set_size_inches(8, 8)
+        fig.set_size_inches(10, 10)
 
         ax.set_title("Confusion Matrix")
 
