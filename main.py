@@ -10,7 +10,7 @@ import pytorch_lightning as pl
 
 from pytorch_lightning import loggers as pl_loggers
 
-from models.modeling_pl import VisionTransformer, CONFIGS
+from models.vit import ViT
 from utils.data_utils_pl import get_loader
 
 logger = logging.getLogger(__name__)
@@ -34,10 +34,7 @@ def load_args(config_path : str = "experiments/hymenoptera_pretrain.json"):
 
 def load_model(args):
 
-    config      = CONFIGS[args["model_type"]]
-    num_classes = args["num_classes"]
-
-    model = VisionTransformer(config, args, args["img_size"], zero_head=True, num_classes=num_classes)
+    model = ViT(config=args)
 
     if ("pretrained_dir" in args):
         model.load_from(np.load(args["pretrained_dir"]))
@@ -57,7 +54,6 @@ def train(args, model):
     trainer = pl.Trainer(max_epochs = args["max_epochs"],
                          callbacks  = [checkpoint_callback],
                          logger     = tb_logger,
-                         log_every_n_steps = 8,
                          check_val_every_n_epoch=1)
 
     trainer.fit(model, train_dataloaders=train_loader, val_dataloaders=test_loader)
@@ -72,17 +68,16 @@ def eval(args, model):
 def main():
 
     clargs = load_clargs()
-    args  = load_args(clargs.expt)
+    args   = load_args(clargs.expt)
 
-    model = load_model(args)
+    model  = load_model(args)
 
     if (clargs.mode.lower() == "train"):
         train(args, model)
 
     elif (clargs.mode.lower() == "eval"):
         ckpt_path = clargs.ckpt_path
-        config      = CONFIGS[args["model_type"]]
-        model = VisionTransformer.load_from_checkpoint(ckpt_path, config=config, args=args, img_size=args["img_size"])
+        model = ViT.load_from_checkpoint(ckpt_path, config=args)
 
         eval(args, model)
 
