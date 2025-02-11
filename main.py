@@ -11,7 +11,7 @@ import pytorch_lightning as pl
 from pytorch_lightning import loggers as pl_loggers
 
 from models.vit import ViT
-from utils.data_utils_pl import get_loader
+from utils.data_utils import get_loader
 
 logger = logging.getLogger(__name__)
 
