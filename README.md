@@ -49,48 +49,16 @@ $ source env/bin/activate
 
 ### 3. Train Model
 ```
-(env) $ python3 main.py --mode train --expt experiments/hymenoptera_pretrain_ViT-B_16.json
+(env) $ python3 main.py --mode train --expt experiments/cifar10_pretrained_ViT-B_16.json
 ```
 
-The Hymenoptera dataset can be downloaded at the following [link]()https://www.kaggle.com/datasets/thedatasith/hymenoptera/code
-
-The default batch size is 8 due to limitations on my personal machine, however on the original repository, the batch size is set to 512 by default.
-
-Additionally, the model can be trained with the PyTorch version:
-
-```
-(env) $ python3 train.py --name hymenoptera_old_implem --model_type ViT-B_16 --pretrained_dir checkpoint/imagenet_weights/ViT-B_16.npz --train_batch_size 8 --eval_batch_size 8 --eval_every 31 --num_steps 700
-```
+The default batch size is 16 due to limitations on my personal machine, however on the original repository, the batch size is set to 512 by default.
 
 ### 4. Evaluate Model
 Lightning version:
 ```
-(env) $ python3 main.py --mode eval --expt experiments/hymenoptera_pretrain_iT-B_16.json --ckpt_path checkpoint/your_model.ckpt
+(env) $ python3 main.py --mode eval --expt experiments/cifar10_pretrained_ViT-B_16.json --ckpt_path checkpoint/your_model.ckpt
 ```
-
-## Results
-The model was trained and evaluated on the Hymenoptera dataset for the binary classification of ants and bees. Training was conducted for a total of 25 epochs with a batch size of 8 per experiment. All experiments were performed on an NVIDIA GeForce GTX 1650 GPU with 4GB of VRAM. Optimization was carried out using Stochastic Gradient Descent (SGD) with a learning rate of $3 \cdot 10^{-2}$, employing a WarmupCosine learning rate scheduler. Detailed specifications and configurations for each experiment are documented in the `experiment/` directory., with WarmupCosine scheduler.
-
-The "Pretrain" column in this table refers to if this model was instantiated with the imagenet21k pre-train + imagenet2012 fine-tuning weights.
-
-|    Model     |  Pretrain   | Patch Size | Resolution |   ↑ Accuracy  |    F1-score    |    AUC    |  time   |
-|:------------:|:-----------:|:----------:|:----------:|:-------------:|:--------------:|:---------:|:-------:|
-|   ViT-B_16   | Yes         |   16x16    |  224x224   |    0.9673     |     0.9650     |   0.9945  |    9m   |
-|   ViT-B_32   | Yes         |   32x32    |  224x224   |    0.9608     |     0.9571     |   0.9927  |    2m   |
-| R50-ViT-B_16 | Yes         |   16x16    |  224x224   |    0.9542     |     0.9503     |   0.9800  |   11m   |
-|ViT-B_16 (Old)| Yes         |   16x16    |  224x224   |    0.9477     |        -       |      -    |    9m   |
-|   ViT-B_16   | No          |   16x16    |  224x224   |    0.7124     |     0.7179     |   0.7687  |    8m   |
-|   ViT-B_32   | No          |   32x32    |  224x224   |    0.6993     |     0.7088     |   0.7989  |    2m   |
-| R50-ViT-B_16 | No          |   16x16    |  224x224   |    0.5424     |      0.0       |   0.5353  |   11m   |
-
-
-### Pretrained VIT-B_16 ROC
-
-![img](./img/roc_curve.png)
-
-### Pretrained ViT-B_16 Confusion Matrix
-
-![img](./img/confusion_matrix.png)
 
 ## References
 * [Original ViT-PyTorch repo](https://github.com/jeonsworld/ViT-pytorch)
