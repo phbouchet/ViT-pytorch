@@ -60,6 +60,7 @@ Lightning version:
 (env) $ python3 main.py --mode eval --expt experiments/cifar10_pretrained_ViT-B_16.json --ckpt_path checkpoint/your_model.ckpt
 ```
 
+
 ## References
 * [Original ViT-PyTorch repo](https://github.com/jeonsworld/ViT-pytorch)
 * [Google ViT](https://github.com/google-research/vision_transformer)
