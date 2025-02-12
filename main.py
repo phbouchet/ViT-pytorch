@@ -1,13 +1,10 @@
 # coding=utf-8
-from __future__ import absolute_import, division, print_function
-
+import json
 import argparse
 import logging
+
 import numpy as np
-import json
-
 import pytorch_lightning as pl
-
 from pytorch_lightning import loggers as pl_loggers
 
 from models.vit import ViT
