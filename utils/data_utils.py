@@ -1,16 +1,15 @@
 import logging
 
-import torch
+import torch.distributed as dist
 
 from torchvision import transforms, datasets
 from torch.utils.data import DataLoader, SequentialSampler, RandomSampler, DistributedSampler
 
 logger = logging.getLogger(__name__)
 
-
 def get_loader(config):
     if config["local_rank"] not in [-1, 0]:
-        torch.distributed.barrier()
+        dist.barrier()
 
     transform_train = transforms.Compose([
         transforms.RandomResizedCrop((config["img_size"], config["img_size"]), scale=(0.05, 1.0)),
@@ -38,7 +37,7 @@ def get_loader(config):
         raise NotImplementedError("No other dataset implemented. Please specify which dataset to use.")
 
     if config["local_rank"] == 0:
-        torch.distributed.barrier()
+        dist.barrier()
 
     # Create sampler
     train_sampler = RandomSampler(trainset) if config["local_rank"] == -1 else DistributedSampler(trainset)
