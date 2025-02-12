@@ -1,4 +1,3 @@
-# coding=utf-8
 import logging
 
 import pytorch_lightning as pl
@@ -12,12 +11,12 @@ from torchvision import transforms
 from torchvision.models.vision_transformer import VisionTransformer
 
 import matplotlib
-matplotlib.use('Agg')  # Non-interactive backend for saving figures
 import matplotlib.pyplot as plt
 from PIL import Image
 
 from utils.scheduler import WarmupCosineSchedule
 
+matplotlib.use('Agg')
 logger = logging.getLogger(__name__)
 
 class ViT(pl.LightningModule):
