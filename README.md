@@ -61,6 +61,21 @@ Lightning version:
 ```
 
 
+## Results
+
+
+|    Model     |  Pretrain   | Patch Size | Resolution |   ↑ Accuracy  |    F1-score    |    AUC    |  time   |
+|:------------:|:-----------:|:----------:|:----------:|:-------------:|:--------------:|:---------:|:-------:|
+|   ViT-B_16   | Yes         |   16x16    |  224x224   |     0.9747    |     0.9747     |   0.9995  |    9h   |
+
+### Pretrained VIT-B_16 ROC
+
+![img](./img/roc_curve.png)
+
+### Pretrained ViT-B_16 Confusion Matrix
+
+![img](./img/confusion_matrix.png)
+
 ## References
 * [Original ViT-PyTorch repo](https://github.com/jeonsworld/ViT-pytorch)
 * [Google ViT](https://github.com/google-research/vision_transformer)
